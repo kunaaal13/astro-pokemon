@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+type props = {
+  id: number
+}
+
+// 300 characters are possible
+export function getStaticPaths() {
+  const paths = Array.from({ length: 300 }, (_, i) => ({
+    params: { id: `${i}` },
+  }))
+
+  return paths
+}
+
+const { id } = Astro.params
+
+const data = await fetch(`https://thronesapi.com/api/v2/Characters/${id}`)
+const character = await data.json()
+---
+
+<Layout title={`${character.fullName}`}>
+  <main transition:animate='slide'>
+    <div class='flex items-center justify-center w-full mt-10'>
+      <img
+        src={character.imageUrl}
+        alt={character.fullName}
+        class='rounded-lg h-96 w-96'
+      />
+    </div>
+
+    <div
+      class='flex flex-col items-center justify-center w-full mt-10 space-y-5'
+    >
+      <h2 class='text-3xl font-bold'>
+        The {character.title}
+      </h2>
+
+      <h2 class='text-3xl font-bold'>
+        {character.family}
+      </h2>
+    </div>
+  </main>
+</Layout>
